@@ -20,12 +20,10 @@ public class Client {
             String s = sc.nextLine();
 
             while (!s.equals("exit")) {
-                //response = service.printString("Hello World from a remote client!");
                 response = service.printString(s);
                 System.out.println("Respuesta del server: " + response.value + ", " + response.responseTime);
                 s = sc.nextLine();
             }
-
         }
     }
 }
