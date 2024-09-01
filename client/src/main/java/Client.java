@@ -3,7 +3,6 @@ import Demo.Response;
 import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.ObjectPrx;
 import com.zeroc.Ice.Util;
-
 import java.net.InetAddress;
 import java.util.Scanner;
 
@@ -30,8 +29,11 @@ public class Client
                 }
 
                 String message = username + "@" + hostname + ":" + input;
+                long time= System.currentTimeMillis();
                 Response response = (server.printString(message));
                 System.out.println("Server response: " + response.value);
+                System.out.println("Time taken total: " + (System.currentTimeMillis() - time) + "ms");
+                System.out.println("Received response in " + response.responseTime + "ms");
             }
 
         } catch (Exception e) {
