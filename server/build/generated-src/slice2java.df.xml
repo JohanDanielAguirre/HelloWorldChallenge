@@ -1,11 +1,11 @@
 <state>
-  <timestamp value='1725225037188' />
+  <timestamp value='1725227647845' />
   <sourceSet name='default'>
-    <source name='C:\Users\aguir\Downloads\reto hello world\helloworld-ret\Printer.ice'>
-      <file name='C:\Users\aguir\Downloads\reto hello world\helloworld-ret\server\build\generated-src\Demo\Response.java' />
-      <file name='C:\Users\aguir\Downloads\reto hello world\helloworld-ret\server\build\generated-src\Demo\Printer.java' />
-      <file name='C:\Users\aguir\Downloads\reto hello world\helloworld-ret\server\build\generated-src\Demo\PrinterPrx.java' />
-      <file name='C:\Users\aguir\Downloads\reto hello world\helloworld-ret\server\build\generated-src\Demo\_PrinterPrxI.java' />
+    <source name='C:\Users\aguir\Downloads\ti2 para calificar\HelloWorldChallenge\Printer.ice'>
+      <file name='C:\Users\aguir\Downloads\ti2 para calificar\HelloWorldChallenge\server\build\generated-src\Demo\Response.java' />
+      <file name='C:\Users\aguir\Downloads\ti2 para calificar\HelloWorldChallenge\server\build\generated-src\Demo\Printer.java' />
+      <file name='C:\Users\aguir\Downloads\ti2 para calificar\HelloWorldChallenge\server\build\generated-src\Demo\PrinterPrx.java' />
+      <file name='C:\Users\aguir\Downloads\ti2 para calificar\HelloWorldChallenge\server\build\generated-src\Demo\_PrinterPrxI.java' />
     </source>
     <arg value='C:\Program Files\ZeroC\Ice-3.7.10\\bin\slice2java.exe' />
     <arg value='-IC:\Program Files\ZeroC\Ice-3.7.10\\slice' />

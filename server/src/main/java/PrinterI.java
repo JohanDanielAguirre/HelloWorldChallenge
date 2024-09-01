@@ -14,13 +14,8 @@ import java.util.List;
 
 public class PrinterI implements Demo.Printer
 {
-    public Response printString(String s, com.zeroc.Ice.Current current)
-    {
-        System.out.println(s);
-        return new Response(0, "Server response: " + s);
-    }
-
-    public String processMessage(String message, Current __current) {
+    @Override
+    public Response printString(String message, Current __current) {
         String result = "";
         try {
             String[] splitMessage = message.split(":", 2);
@@ -60,7 +55,7 @@ public class PrinterI implements Demo.Printer
             e.printStackTrace();
             result = "Error processing message.";
         }
-        return result;
+        return new Response(0, result);
     }
 
     private String fibonacci(int n) {

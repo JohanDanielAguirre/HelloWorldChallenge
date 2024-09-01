@@ -30,8 +30,8 @@ public class Client
                 }
 
                 String message = username + "@" + hostname + ":" + input;
-                String response = String.valueOf(server.printString(message));
-                System.out.println("Server response: " + response);
+                Response response = (server.printString(message));
+                System.out.println("Server response: " + response.value);
             }
 
         } catch (Exception e) {

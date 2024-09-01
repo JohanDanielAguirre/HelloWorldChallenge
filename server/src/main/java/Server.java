@@ -26,7 +26,8 @@ public class Server
 
     public static void f(String m)
     {
-        String str = null, output = "";
+        String str = null;
+        StringBuilder output = new StringBuilder();
 
         InputStream s;
         BufferedReader r;
@@ -36,7 +37,7 @@ public class Server
 
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream())); 
             while ((str = br.readLine()) != null) 
-                output += str + System.lineSeparator();
+                output.append(str).append(System.lineSeparator());
             br.close(); 
         }
         catch(Exception ex) {
