@@ -36,10 +36,11 @@ public class Server
 
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream())); 
             while ((str = br.readLine()) != null) 
-            output += str + System.getProperty("line.separator"); 
+                output += str + System.lineSeparator();
             br.close(); 
         }
         catch(Exception ex) {
+            ex.printStackTrace();
         }
     }
 
