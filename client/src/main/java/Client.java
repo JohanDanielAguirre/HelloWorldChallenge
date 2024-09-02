@@ -24,7 +24,7 @@ public class Client
         Communicator communicator = null;
         try {
             communicator = Util.initialize(args, "config.client");
-            ObjectPrx base = communicator.stringToProxy("SimpleServer:default -p 10000");
+            ObjectPrx base = communicator.stringToProxy("SimpleServer:default -p 9099");
             PrinterPrx server = PrinterPrx.checkedCast(base);
             if (server == null) throw new Error("Invalid proxy");
             Scanner scanner = new Scanner(System.in);

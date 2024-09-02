@@ -3,8 +3,8 @@
 # "Hello". The following line sets the endpoints for this
 # adapter.
 #
-Printer.Endpoints=tcp -p 9099 -h 192.168.7.124
+Printer.Endpoints=tcp -p 9099
 #
 # Only listen on the ZeroTier's LIASOn1 interface by default.
 #
-Ice.Default.Host=localhost
+Ice.Default.Host=xhgrid2
