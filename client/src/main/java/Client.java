@@ -33,7 +33,8 @@ public class Client
                 Response response = (server.printString(message));
                 System.out.println("Server response: " + response.value);
                 System.out.println("Time taken total: " + (System.currentTimeMillis() - time) + "ms");
-                System.out.println("Received response in " + response.responseTime + "ms");
+                System.out.println("Received response or processing time of " + response.responseTime + "ms");
+                System.out.println("latency is " + (System.currentTimeMillis() - time - response.responseTime) + "ms");
             }
 
         } catch (Exception e) {
