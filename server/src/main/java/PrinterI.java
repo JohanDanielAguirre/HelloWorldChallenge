@@ -46,6 +46,7 @@ public class PrinterI implements Demo.Printer {
         } catch (Exception e) {
             e.printStackTrace();
             result = "Error processing message.";
+            return new Response(0, result);
         }
         if (time == 0) {
             return new Response(0, result);
