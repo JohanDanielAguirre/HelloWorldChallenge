@@ -59,7 +59,7 @@ public class Client
         System.exit(status);
     }
 
-    
+
         /**
          * Test the performance of the server by sending a series of messages to the server
          * and then printing out the results.
