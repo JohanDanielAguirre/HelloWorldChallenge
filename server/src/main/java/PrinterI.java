@@ -2,6 +2,28 @@ import Demo.Response;
 import com.zeroc.Ice.Current;
 
 public class PrinterI implements Demo.Printer {
+    /**
+     * Process a message from the client.
+     *
+     * The message format is "user@host:command", where command is a string
+     * that can be one of the following:
+     *
+     * 1. A number, in which case the server will return the Fibonacci
+     * series up to the given number, along with the prime factors of the
+     * number.
+     * 2. "listifs", in which case the server will return a list of all
+     * network interfaces on the server.
+     * 3. "listports <ip address>", in which case the server will return a
+     * list of open ports on the given IP address.
+     * 4. "!command", in which case the server will execute the given
+     * command on the server and return the output.
+     * 5. Any other string, in which case the server will return "Unknown
+     * command.".
+     *
+     * @param message the message from the client
+     * @param __current the ICE Current object
+     * @return a Response object containing the result of the command
+     */
     @Override
     public Response printString(String message, Current __current) {
         String result = "";

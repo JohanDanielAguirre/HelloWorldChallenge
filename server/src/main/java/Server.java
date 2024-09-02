@@ -11,6 +11,16 @@ import java.util.List;
 
 public class Server
 {
+    /**
+     * The main entry point for the server.
+     *
+     * <p>This program starts an Ice object adapter and waits for the
+     * adapter to be shut down. This is the simplest way to start an
+     * Ice server; the adapter will be destroyed when the program
+     * terminates.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         int status = 0;
         Communicator communicator = null;
@@ -31,7 +41,12 @@ public class Server
         }
         System.exit(status);
     }
-
+    /**
+     * Generates the Fibonacci series up to n.
+     *
+     * @param n The number of elements to generate in the series
+     * @return The Fibonacci series as a string
+     */
     public static String fibonacci(int n) {
         // Genera la serie de Fibonacci hasta n
         List<Integer> fibSeries = new ArrayList<>();
@@ -44,7 +59,12 @@ public class Server
         }
         return fibSeries.toString();
     }
-
+    /**
+     * Calculates the prime factors of n.
+     *
+     * @param n the number to factor
+     * @return a list of the prime factors of n
+     */
     public static String primeFactors(int n) {
         // Calcula los factores primos de n
         List<Integer> factors = new ArrayList<>();
@@ -57,6 +77,15 @@ public class Server
         return factors.toString();
     }
 
+    /**
+     * Returns a string containing the display names of all available network
+     * interfaces on the system, one per line.
+     *
+     * @return a string containing the display names of all available network
+     *         interfaces
+     * @throws SocketException if an error occurs while retrieving the list of
+     *         network interfaces
+     */
     public static String listInterfaces() throws java.net.SocketException {
         StringBuilder sb = new StringBuilder();
         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
@@ -65,7 +94,11 @@ public class Server
         }
         return sb.toString();
     }
-
+    /**
+     * Executes nmap to scan open ports in the given IP address.
+     * @param ipAddress the IP address to scan
+     * @return a string containing the output of nmap
+     */
     public static String listOpenPorts(String ipAddress) {
         StringBuilder output = new StringBuilder();
         try {
@@ -84,6 +117,12 @@ public class Server
         return output.toString();
     }
 
+
+    /**
+     * Executes a command and returns its output.
+     * @param command the command to execute
+     * @return the output of the command
+     */
     public static String executeCommand(String command) {
         StringBuilder output = new StringBuilder();
         try {
