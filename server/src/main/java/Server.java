@@ -25,7 +25,7 @@ public class Server
         int status = 0;
         Communicator communicator = null;
         try {
-            communicator = Util.initialize(args);
+            communicator = Util.initialize(args, "config.server");
             ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints("ServerAdapter", "default -p 10000");
             Object object = new PrinterI();
             adapter.add((com.zeroc.Ice.Object) object, Util.stringToIdentity("SimpleServer"));

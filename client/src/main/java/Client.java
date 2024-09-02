@@ -23,7 +23,7 @@ public class Client
         int status = 0;
         Communicator communicator = null;
         try {
-            communicator = Util.initialize(args);
+            communicator = Util.initialize(args, "config.client");
             ObjectPrx base = communicator.stringToProxy("SimpleServer:default -p 10000");
             PrinterPrx server = PrinterPrx.checkedCast(base);
             if (server == null) throw new Error("Invalid proxy");
