@@ -32,14 +32,20 @@ public class Client
             String hostname = InetAddress.getLocalHost().getHostName();
 
             while (true) {
-                System.out.print("Enter a message (or 'exit' to quit): ");
+
+                System.out.println("Welcome " + username + " on " + hostname + ".");
+                System.out.print("Enter  " +
+                        "a number to get the Fibonacci series up to that number " +
+                        "'listifs' for network interfaces" +
+                        "'listports <ip address> for open ports on <ip address>'" +
+                        "'!command' to execute command on server linux console" +
+                        "or 'exit' to quit: ");
                 String input = scanner.nextLine();
                 if (input.equals("exit")) {
                     break;
                 } else if (input.startsWith("test")) {
                     requeststest(server);
                 }
-
                 String message = username + "@" + hostname + ":" + input;
                 long time= System.currentTimeMillis();
                 Response response = (server.printString(message));
@@ -48,10 +54,12 @@ public class Client
                 System.out.println("Received response or processing time of " + response.responseTime + "ms");
                 System.out.println("latency is " + (System.currentTimeMillis() - time - response.responseTime) + "ms");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             status = 1;
+            if (communicator != null) {
+                communicator.destroy();
+            }
         }
         if (communicator != null) {
             communicator.destroy();
