@@ -48,7 +48,6 @@ public class Server
      * @return The Fibonacci series as a string
      */
     public static String fibonacci(int n) {
-        // Genera la serie de Fibonacci hasta n
         List<Integer> fibSeries = new ArrayList<>();
         int a = 0, b = 1;
         while (n-- > 0) {
@@ -66,7 +65,6 @@ public class Server
      * @return a list of the prime factors of n
      */
     public static String primeFactors(int n) {
-        // Calcula los factores primos de n
         List<Integer> factors = new ArrayList<>();
         for (int i = 2; i <= n; i++) {
             while (n % i == 0) {
