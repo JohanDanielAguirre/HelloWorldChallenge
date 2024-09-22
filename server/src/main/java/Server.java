@@ -2,7 +2,9 @@ import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.ObjectAdapter;
 import com.zeroc.Ice.Util;
 import java.io.*;
+import java.math.BigInteger;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -48,16 +50,20 @@ public class Server
      * @return The Fibonacci series as a string
      */
     public static String fibonacci(int n) {
-        List<Integer> fibSeries = new ArrayList<>();
-        int a = 0, b = 1;
+        List<BigInteger> fibSeries = new ArrayList<>();
+        BigInteger a = BigInteger.ZERO;
+        BigInteger b = BigInteger.ONE;
+
         while (n-- > 0) {
             fibSeries.add(a);
-            int temp = a + b;
+            BigInteger temp = a.add(b);
             a = b;
             b = temp;
         }
+
         return fibSeries.toString();
     }
+
     /**
      * Calculates the prime factors of n.
      *
