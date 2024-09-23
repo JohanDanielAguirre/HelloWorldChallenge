@@ -14,4 +14,4 @@ Printer.Proxy=SimplePrinter:tcp -p 9099
 #
 
 size=1000000000
-Ice.Default.Host=localhost
+Ice.Default.Host=xhgrid2

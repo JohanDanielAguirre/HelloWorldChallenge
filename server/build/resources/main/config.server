@@ -8,4 +8,4 @@ Printer.Endpoints=tcp -p 9099
 # Only listen on the ZeroTier's LIASOn1 interface by default.
 #
 size=1000000000
-Ice.Default.Host=localhost
+Ice.Default.Host=xhgrid2
