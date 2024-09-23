@@ -1,0 +1,12 @@
+#line 1 "C:/Users/firer/OneDrive/Escritorio/UNIVERSIDAD/ICESI/sexto semestre/Software 4/HelloWorldChallenge/Printer.ice"
+module Demo
+{
+    class Response{
+        long responseTime;
+        string value;
+    }
+    interface Printer
+    {
+        Response printString(string s);
+    }
+}

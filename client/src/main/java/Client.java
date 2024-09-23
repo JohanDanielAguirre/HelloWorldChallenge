@@ -78,7 +78,7 @@ public class Client
 
             // Calcular el throughput
             long totalTime = System.currentTimeMillis() - startTime;
-            double throughput = totalRequests.get() / (double) totalTime;
+            double throughput = totalRequests.get() / ((double) totalTime/100.0);
 
             // Almacenar los valores en el array multidimensional
             metricsArray[0][0] = "Total Requests";
@@ -93,7 +93,7 @@ public class Client
             metricsArray[3][0] = "Unprocessed Requests";
             metricsArray[3][1] = String.valueOf(unprocessedRequests.get());
 
-            metricsArray[4][0] = "Throughput (requests/ms)";
+            metricsArray[4][0] = "Throughput (requests/s)";
             metricsArray[4][1] = String.format("%.4f", throughput);
 
             // Imprimir la tabla con las métricas
