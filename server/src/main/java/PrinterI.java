@@ -1,7 +1,22 @@
 import Demo.Response;
 import com.zeroc.Ice.Current;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PrinterI implements Demo.Printer {
+
+
+    private List<String> clients = new ArrayList<>(); // Lista para almacenar los clientes
+
+    @Override
+    public Response printString(String message, Current __current) {
+        // Crear un nuevo hilo para manejar la solicitud
+        new Thread(() -> handleRequest(message, __current)).start();
+        return new Response(0, "Request is being processed."); // Mensaje de respuesta inicial
+    }
+
+
     /**
      * Process a message from the client.
      *
@@ -24,8 +39,8 @@ public class PrinterI implements Demo.Printer {
      * @param __current the ICE Current object
      * @return a Response object containing the result of the command
      */
-    @Override
-    public Response printString(String message, Current __current) {
+
+    public Response handleRequest(String message, Current __current) {
         String result = "";
         long time=0;
         try {
@@ -33,7 +48,39 @@ public class PrinterI implements Demo.Printer {
             String userHost = splitMessage[0];
             String command = splitMessage[1];
 
-            if (command.matches("\\d+")) {
+
+            // Registro de clientes
+            if (command.startsWith("register")) {
+                String clientHost = command.split(" ")[1];
+                if (!clients.contains(clientHost)) {
+                    clients.add(clientHost);
+                    result = "Client registered: " + clientHost;
+                } else {
+                    result = "Client already registered.";
+                }
+                return new Response(0, result);
+            } else if (command.startsWith("list clients")) {
+                result = String.join(", ", clients);
+                return new Response(0, result);
+            } else if (command.startsWith("BC")) {
+                String broadcastMessage = command.substring(3);
+                result = "Broadcast message: " + broadcastMessage; // Simulación de broadcast
+                // Simular el envío a todos los clientes
+                for (String client : clients) {
+                    System.out.println("Sending to " + client + ": " + broadcastMessage);
+                }
+                return new Response(0, result);
+            } else if (command.startsWith("to ")) {
+                String[] parts = command.split(":");
+                if (parts.length > 1) {
+                    String targetClient = parts[0].substring(3).trim(); // Eliminar "to "
+                    String messageToSend = parts[1].trim();
+                    result = "Message to " + targetClient + ": " + messageToSend; // Simulación de envío
+                } else {
+                    result = "Error: No message provided.";
+                }
+                return new Response(0, result);
+            }else if (command.matches("\\d+")) {
                 int n = Integer.parseInt(command);
                 time = System.currentTimeMillis();
                 String fibonacciSeries = Server.fibonacci(n);

@@ -41,9 +41,14 @@ public class Client
             Scanner scanner = new Scanner(System.in);
             String username = System.getProperty("user.name");
             String hostname = InetAddress.getLocalHost().getHostName();
+            server.printString("register " + hostname);
 
             while (true) {
                 System.out.println("Welcome " + username + " on " + hostname + ".");
+                System.out.print("Enter a command:\n" +
+                        "'list clients' to see registered clients\n" +
+                        "'to X: <message>' to send a message to client X\n" +
+                        "'BC <message>' to broadcast a message\n" );
                 System.out.print("Enter a number to get the Fibonacci series up to that number\n" +
                         "'listifs' for network interfaces\n" +
                         "'listports <ip address>' for open ports on <ip address>\n" +
@@ -54,8 +59,10 @@ public class Client
                 // Exit and print throughput
                 if (input.equals("exit")) {
                     break;
+                }else if (input.equals("requeststest")) {
+                    requeststest(server);
+                    continue;
                 }
-
                 totalRequests.incrementAndGet();
                 try {
                     String message = username + "@" + hostname + ":" + input;
@@ -115,5 +122,121 @@ public class Client
             }
             System.exit(status);
         }
+    }
+
+    /**
+     * Test the performance of the server by sending a series of messages to the server
+     * and then printing out the results.
+     *
+     * @param server the server to test
+     * @throws UnknownHostException if the hostname for the server could not be found
+     */
+    private static void requeststest(PrinterPrx server) throws UnknownHostException {
+        long time = System.currentTimeMillis();
+        int throughput = 0;
+        int unprocessed = 0;
+        int total = 0;
+        int missing = 0;
+        String username = System.getProperty("user.name");
+        String hostname = InetAddress.getLocalHost().getHostName();
+        while (System.currentTimeMillis() - time < 1000) {
+            String message = username + "@" + hostname + ":" + "listifs";
+            Response response = (server.printString(message));
+            if (response.responseTime > 0) {
+                throughput++;
+            } else {
+                unprocessed++;
+            }
+            if (response.value == null || response.value.isEmpty()) {
+                {
+                    missing++;
+                }
+            }
+            total = throughput + unprocessed + missing;
+        }
+        System.out.println(" ");
+        System.out.println("Tiempos para ejecucion de listifs");
+        System.out.println("Throughput: " + throughput + " requests/s");
+        System.out.println("Unprocessed: " + unprocessed + " requests/s");
+        System.out.println("Missing: " + missing + " requests/s");
+        System.out.println("Total: " + total + " requests/s");
+
+        time = System.currentTimeMillis();
+        throughput = 0;
+        unprocessed = 0;
+        missing = 0;
+        while (System.currentTimeMillis() - time < 1000) {
+            String message = username + "@" + hostname + ":" + "10";
+            Response response = (server.printString(message));
+            if (response.responseTime > 0) {
+                throughput++;
+            } else {
+                unprocessed++;
+            }
+            if (response.value == null || response.value.isEmpty()) {
+                {
+                    missing++;
+                }
+            }
+            total = throughput + unprocessed + missing;
+        }
+        System.out.println(" ");
+        System.out.println("Tiempos para ejecucion de fibonacci");
+        System.out.println("Throughput: " + throughput + " requests/s");
+        System.out.println("Unprocessed: " + unprocessed + " requests/s");
+        System.out.println("Missing: " + missing + " requests/s");
+        System.out.println("Total: " + total + " requests/s");
+
+        time = System.currentTimeMillis();
+        throughput = 0;
+        unprocessed = 0;
+        missing = 0;
+        while (System.currentTimeMillis() - time < 10000) {
+            String message = username + "@" + hostname + ":" + "listports localhost";
+            Response response = (server.printString(message));
+            if (response.responseTime > 0) {
+                throughput++;
+            } else {
+                unprocessed++;
+            }
+            if (response.value == null || response.value.isEmpty()) {
+                {
+                    missing++;
+                }
+            }
+            total = throughput + unprocessed + missing;
+        }
+        System.out.println(" ");
+        System.out.println("Tiempos para ejecucion de nmap");
+        System.out.println("Throughput: " + throughput + " requests/s");
+        System.out.println("Unprocessed: " + unprocessed + " requests/s");
+        System.out.println("Missing: " + missing + " requests/s");
+        System.out.println("Total: " + total + " requests/s");
+
+        time = System.currentTimeMillis();
+        throughput = 0;
+        unprocessed = 0;
+        missing = 0;
+        while (System.currentTimeMillis() - time < 1000) {
+            String message = username + "@" + hostname + ":" + "!java -version";
+            Response response = (server.printString(message));
+            if (response.responseTime > 0) {
+                throughput++;
+            } else {
+                unprocessed++;
+            }
+            if (response.value == null || response.value.isEmpty()) {
+                {
+                    missing++;
+                }
+            }
+        }
+        System.out.println(" ");
+        System.out.println("Tiempos para ejecucion de comando en consola");
+        total = throughput + unprocessed + missing;
+        System.out.println("Throughput: " + throughput + " requests/s");
+        System.out.println("Unprocessed: " + unprocessed + " requests/s");
+        System.out.println("Missing: " + missing + " requests/s");
+        System.out.println("Total: " + total + " requests/s");
     }
 }
