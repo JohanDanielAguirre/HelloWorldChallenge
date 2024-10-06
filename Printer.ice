@@ -7,5 +7,6 @@ module Demo
     interface Printer
     {
         Response printString(string s);
+        Response sendMessage(String message, Current __current);
     }
 }

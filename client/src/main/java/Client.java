@@ -63,6 +63,18 @@ public class Client
                     requeststest(server);
                     continue;
                 }
+
+                if (input.startsWith("TO ")) {
+                    String[] parts = input.split(" ", 3); // Divide el mensaje en partes
+                    if (parts.length == 3) {
+                        String recipient = parts[1]; // Usuario destinatario
+                        String message = username + "@" + hostname + " to " + recipient + ": " + parts[2];
+                        Response response = server.printString(message);
+                        System.out.println("Server response: " + response.value);
+                    } else {
+                        System.out.println("Usage: TO <username> <message>");
+                    }
+                }
                 totalRequests.incrementAndGet();
                 try {
                     String message = username + "@" + hostname + ":" + input;

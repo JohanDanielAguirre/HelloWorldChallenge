@@ -1,13 +1,15 @@
 import Demo.Response;
 import com.zeroc.Ice.Current;
+import com.zeroc.Ice.ObjectPrx;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PrinterI implements Demo.Printer {
 
 
-    private List<String> clients = new ArrayList<>(); // Lista para almacenar los clientes
+    private List<ObjectPrx> clients = new ArrayList<>(); // Lista para almacenar los clientes
 
     @Override
     public Response printString(String message, Current __current) {
@@ -51,36 +53,62 @@ public class PrinterI implements Demo.Printer {
 
             // Registro de clientes
             if (command.startsWith("register")) {
+                ObjectPrx clientProxy = (ObjectPrx) __current;
                 String clientHost = command.split(" ")[1];
-                if (!clients.contains(clientHost)) {
-                    clients.add(clientHost);
+
+                if (!clients.contains(clientProxy)) {
+                    clients.add(clientProxy);
                     result = "Client registered: " + clientHost;
                 } else {
                     result = "Client already registered.";
                 }
                 return new Response(0, result);
+
             } else if (command.startsWith("list clients")) {
-                result = String.join(", ", clients);
+
+                result = String.join(", ", clients.toString());
                 return new Response(0, result);
+
             } else if (command.startsWith("BC")) {
                 String broadcastMessage = command.substring(3);
-                result = "Broadcast message: " + broadcastMessage; // Simulación de broadcast
-                // Simular el envío a todos los clientes
-                for (String client : clients) {
-                    System.out.println("Sending to " + client + ": " + broadcastMessage);
+                result = "Broadcast message: " + broadcastMessage;
+                for (ObjectPrx client : clients) {
+                    try {
+                        Demo.PrinterPrx clientPrinter = Demo.PrinterPrx.checkedCast(client);
+                        if (clientPrinter != null) {
+                            clientPrinter.printString("Broadcast from server: " + broadcastMessage);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error sending to client: " + e.getMessage());
+                    }
                 }
                 return new Response(0, result);
-            } else if (command.startsWith("to ")) {
-                String[] parts = command.split(":");
-                if (parts.length > 1) {
-                    String targetClient = parts[0].substring(3).trim(); // Eliminar "to "
-                    String messageToSend = parts[1].trim();
-                    result = "Message to " + targetClient + ": " + messageToSend; // Simulación de envío
-                } else {
-                    result = "Error: No message provided.";
+
+            }else if (command.startsWith("to ")) {
+                String[] parts = command.split(" ", 3);
+                if (parts.length < 3) {
+                    return new Response(0, "Error: Insufficient parameters for 'to' command.");
                 }
-                return new Response(0, result);
-            }else if (command.matches("\\d+")) {
+                String recipient = parts[1];
+                String messageToSend = parts[2];
+
+                // Buscar el cliente en la lista
+                for (ObjectPrx client : clients) {
+                    Demo.PrinterPrx clientPrinter = Demo.PrinterPrx.checkedCast(client);
+                    if (clientPrinter != null) {
+                        String clientHost = clientPrinter.ice_getIdentity().name; // Obtener el nombre del cliente
+                        String clientCategory = clientPrinter.ice_getIdentity().category; // Obtener la categoría del cliente
+                        String clientIdentifier = clientHost + "@" + clientCategory; // Formar una identificación única
+
+                        if (clientIdentifier.equals(recipient)) {
+                            clientPrinter.printString("Message from " + userHost + ": " + messageToSend);
+                            return new Response(0, "Message sent to " + recipient);
+                        }
+                    }
+                }
+                return new Response(0, "Error: Client " + recipient + " not found.");
+            }
+            else if (command.matches("\\d+")) {
                 int n = Integer.parseInt(command);
                 time = System.currentTimeMillis();
                 String fibonacciSeries = Server.fibonacci(n);
