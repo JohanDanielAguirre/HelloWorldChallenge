@@ -5,14 +5,12 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 
 public class Server
 {
+
     /**
      * The main entry point for the server.
      *
@@ -30,118 +28,14 @@ public class Server
             communicator = Util.initialize(args, "config.server");
             ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints("ServerAdapter", "default -p 9099");
             Object object = new PrinterI();
-            adapter.add((com.zeroc.Ice.Object) object, Util.stringToIdentity("SimpleServer"));
+            adapter.add((com.zeroc.Ice.Object) object, Util.stringToIdentity("Server"));
             adapter.activate();
             System.out.println("Server started...");
             communicator.waitForShutdown();
         } catch (Exception e) {
-            e.printStackTrace();
-            status = 1;
-        }
-        if (communicator != null) {
-            communicator.destroy();
-        }
-        System.exit(status);
-    }
-    /**
-     * Generates the Fibonacci series up to n.
-     *
-     * @param n The number of elements to generate in the series
-     * @return The Fibonacci series as a string
-     */
-    public static String fibonacci(int n) {
-        List<BigInteger> fibSeries = new ArrayList<>();
-        BigInteger a = BigInteger.ZERO;
-        BigInteger b = BigInteger.ONE;
 
-        while (n-- > 0) {
-            fibSeries.add(a);
-            BigInteger temp = a.add(b);
-            a = b;
-            b = temp;
         }
-
-        return fibSeries.toString();
     }
 
-    /**
-     * Calculates the prime factors of n.
-     *
-     * @param n the number to factor
-     * @return a list of the prime factors of n
-     */
-    public static String primeFactors(int n) {
-        List<Integer> factors = new ArrayList<>();
-        for (int i = 2; i <= n; i++) {
-            while (n % i == 0) {
-                factors.add(i);
-                n /= i;
-            }
-        }
-        return factors.toString();
-    }
-
-    /**
-     * Returns a string containing the display names of all available network
-     * interfaces on the system, one per line.
-     *
-     * @return a string containing the display names of all available network
-     *         interfaces
-     * @throws SocketException if an error occurs while retrieving the list of
-     *         network interfaces
-     */
-    public static String listInterfaces() throws java.net.SocketException {
-        StringBuilder sb = new StringBuilder();
-        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-        for (NetworkInterface netint : Collections.list(nets)) {
-            sb.append(netint.getDisplayName()).append("\n");
-        }
-        return sb.toString();
-    }
-    /**
-     * Executes nmap to scan open ports in the given IP address.
-     * @param ipAddress the IP address to scan
-     * @return a string containing the output of nmap
-     */
-    public static String listOpenPorts(String ipAddress) {
-        StringBuilder output = new StringBuilder();
-        try {
-            // Ejecuta el comando nmap para escanear los puertos abiertos
-            Process process = Runtime.getRuntime().exec("nmap -p- " + ipAddress);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-            process.waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-            output.append("Error executing nmap.");
-        }
-        return output.toString();
-    }
-
-
-    /**
-     * Executes a command and returns its output.
-     * @param command the command to execute
-     * @return the output of the command
-     */
-    public static String executeCommand(String command) {
-        StringBuilder output = new StringBuilder();
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-            process.waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-            output.append("Error executing command.");
-        }
-        return output.toString();
-    }
 
 }

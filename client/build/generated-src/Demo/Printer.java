@@ -17,7 +17,17 @@ package Demo;
 
 public interface Printer extends com.zeroc.Ice.Object
 {
-    Response printString(String s, com.zeroc.Ice.Current current);
+    String join(String username, CallbackPrx callback, com.zeroc.Ice.Current current);
+
+    String listUsernames(com.zeroc.Ice.Current current);
+
+    void broadcastMessage(String sender, String s, com.zeroc.Ice.Current current);
+
+    void sendMessage(String sender, String s, String receptor, com.zeroc.Ice.Current current);
+
+    String leave(String username, com.zeroc.Ice.Current current);
+
+    Response executeCommand(String username, String command, com.zeroc.Ice.Current current);
 
     /** @hidden */
     static final String[] _iceIds =
@@ -50,14 +60,120 @@ public interface Printer extends com.zeroc.Ice.Object
      * @param current -
      * @return -
     **/
-    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_printString(Printer obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_join(Printer obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
     {
         com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
         com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_username;
+        CallbackPrx iceP_callback;
+        iceP_username = istr.readString();
+        iceP_callback = CallbackPrx.uncheckedCast(istr.readProxy());
+        inS.endReadParams();
+        String ret = obj.join(iceP_username, iceP_callback, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        ostr.writeString(ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_listUsernames(Printer obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        inS.readEmptyParams();
+        String ret = obj.listUsernames(current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        ostr.writeString(ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_broadcastMessage(Printer obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_sender;
         String iceP_s;
+        iceP_sender = istr.readString();
         iceP_s = istr.readString();
         inS.endReadParams();
-        Response ret = obj.printString(iceP_s, current);
+        obj.broadcastMessage(iceP_sender, iceP_s, current);
+        return inS.setResult(inS.writeEmptyParams());
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_sendMessage(Printer obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_sender;
+        String iceP_s;
+        String iceP_receptor;
+        iceP_sender = istr.readString();
+        iceP_s = istr.readString();
+        iceP_receptor = istr.readString();
+        inS.endReadParams();
+        obj.sendMessage(iceP_sender, iceP_s, iceP_receptor, current);
+        return inS.setResult(inS.writeEmptyParams());
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_leave(Printer obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_username;
+        iceP_username = istr.readString();
+        inS.endReadParams();
+        String ret = obj.leave(iceP_username, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        ostr.writeString(ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_executeCommand(Printer obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_username;
+        String iceP_command;
+        iceP_username = istr.readString();
+        iceP_command = istr.readString();
+        inS.endReadParams();
+        Response ret = obj.executeCommand(iceP_username, iceP_command, current);
         com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
         ostr.writeValue(ret);
         ostr.writePendingValues();
@@ -68,11 +184,16 @@ public interface Printer extends com.zeroc.Ice.Object
     /** @hidden */
     final static String[] _iceOps =
     {
+        "broadcastMessage",
+        "executeCommand",
         "ice_id",
         "ice_ids",
         "ice_isA",
         "ice_ping",
-        "printString"
+        "join",
+        "leave",
+        "listUsernames",
+        "sendMessage"
     };
 
     /** @hidden */
@@ -90,23 +211,43 @@ public interface Printer extends com.zeroc.Ice.Object
         {
             case 0:
             {
-                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
+                return _iceD_broadcastMessage(this, in, current);
             }
             case 1:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
+                return _iceD_executeCommand(this, in, current);
             }
             case 2:
             {
-                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
             }
             case 3:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
             }
             case 4:
             {
-                return _iceD_printString(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+            }
+            case 5:
+            {
+                return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
+            }
+            case 6:
+            {
+                return _iceD_join(this, in, current);
+            }
+            case 7:
+            {
+                return _iceD_leave(this, in, current);
+            }
+            case 8:
+            {
+                return _iceD_listUsernames(this, in, current);
+            }
+            case 9:
+            {
+                return _iceD_sendMessage(this, in, current);
             }
         }
 
