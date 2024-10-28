@@ -2,6 +2,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import Demo.CallbackPrx;
 import Demo.PrinterPrx;
@@ -41,7 +42,10 @@ public class Client{
                     server.leave(username);
                     break;
                 } else if (input.equals("requeststest")) {
+                    System.out.println("Executing requests test for 10 executions per command...");
                     requeststest(server);
+                    System.out.println("Requests test for 1 second per command...");
+                    requeststesttime(server);
                     continue;
                 }
 
@@ -165,6 +169,113 @@ public class Client{
         CompletableFuture<Void> allCustomCommands = CompletableFuture.allOf(customCommandFutures);
         allCustomCommands.join();
         System.out.println("Executed " + repetitions + " custom commands in " + (System.currentTimeMillis() - startTime) + " ms.");
+        // Generar reporte final
+        reportResponse = server.executeCommand(username, "generate_report", null);
+        System.out.println(reportResponse.value);
+    }
+
+    private static void requeststesttime(PrinterPrx server) throws UnknownHostException {
+        String username = System.getProperty("user.name");
+        String hostname = InetAddress.getLocalHost().getHostName();
+
+        // Ejecutar comandos y medir el tiempo
+        long startTime;
+        Response reportResponse;
+
+        // Ejecución del comando "listifs"
+        startTime = System.currentTimeMillis();
+        long duration = 1000; // Duración en milisegundos (1 segundo)
+        long endTime = startTime + duration;
+        AtomicInteger count = new AtomicInteger();
+
+        long finalEndTime1 = endTime;
+        CompletableFuture<Void> allListifs = CompletableFuture.runAsync(() -> {
+            while (System.currentTimeMillis() < finalEndTime1) {
+                try {
+                    Response response = server.executeCommand(username, "listifs", null);
+                    count.getAndIncrement();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        allListifs.join();
+        System.out.println("Executed " + count + " 'listifs' commands in 1 second.");
+
+        // Generar reporte después de 'listifs'
+        reportResponse = server.executeCommand(username, "generate_report", null);
+        System.out.println(reportResponse.value);
+
+        // Ejecución del comando "fibonacci"
+        startTime = System.currentTimeMillis();
+        endTime = startTime + duration;
+        count.set(0);
+
+        long finalEndTime = endTime;
+        CompletableFuture<Void> allFibonacci = CompletableFuture.runAsync(() -> {
+            while (System.currentTimeMillis() < finalEndTime) {
+                try {
+                    Response response = server.executeCommand(username, "10", null); // Comando de Fibonacci
+                    count.getAndIncrement();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        allFibonacci.join();
+        System.out.println("Executed " + count + " 'fibonacci' commands in 1 second.");
+
+        // Generar reporte después de 'fibonacci'
+        reportResponse = server.executeCommand(username, "generate_report", null);
+        System.out.println(reportResponse.value);
+
+        // Ejecución del comando "listports"
+        startTime = System.currentTimeMillis();
+        endTime = startTime + duration;
+        count.set(0);
+
+        long finalEndTime2 = endTime;
+        CompletableFuture<Void> allListports = CompletableFuture.runAsync(() -> {
+            while (System.currentTimeMillis() < finalEndTime2) {
+                try {
+                    Response response = server.executeCommand(username, "listports localhost", null);
+                    count.getAndIncrement();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        allListports.join();
+        System.out.println("Executed " + count + " 'listports' commands in 1 second.");
+
+        // Generar reporte después de 'listports'
+        reportResponse = server.executeCommand(username, "generate_report", null);
+        System.out.println(reportResponse.value);
+
+        // Ejecución de comandos personalizados
+        startTime = System.currentTimeMillis();
+        endTime = startTime + duration;
+        count.set(0);
+        String customCommand = "!java -version"; // Ejemplo de comando personalizado
+
+        long finalEndTime3 = endTime;
+        CompletableFuture<Void> allCustomCommands = CompletableFuture.runAsync(() -> {
+            while (System.currentTimeMillis() < finalEndTime3) {
+                try {
+                    Response response = server.executeCommand(username, customCommand, null);
+                    count.getAndIncrement();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        allCustomCommands.join();
+        System.out.println("Executed " + count + " custom commands in 1 second.");
+
         // Generar reporte final
         reportResponse = server.executeCommand(username, "generate_report", null);
         System.out.println(reportResponse.value);
