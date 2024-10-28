@@ -83,7 +83,7 @@ public class Client{
         String hostname = InetAddress.getLocalHost().getHostName();
 
         // Definir la cantidad de repeticiones por comando
-        int repetitions = 10000; // Número de repeticiones por segundo
+        int repetitions = 10; // Número de repeticiones por segundo
         long startTime;
         Response reportResponse;
 
@@ -94,7 +94,6 @@ public class Client{
             listifsFutures[i] = CompletableFuture.supplyAsync(() -> {
                 try {
                     Response response = server.executeCommand(username, "listifs", null);
-                    System.out.println("Response for listifs: " + response.value);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -107,6 +106,7 @@ public class Client{
 
         // Generar reporte después de 'listifs'
         reportResponse = server.executeCommand(username, "generate_report", null);
+        System.out.println(reportResponse.value);
 
         // Ejecución del comando "fibonacci"
         startTime = System.currentTimeMillis();
@@ -127,6 +127,7 @@ public class Client{
 
         // Generar reporte después de 'fibonacci'
         reportResponse = server.executeCommand(username, "generate_report", null);
+        System.out.println(reportResponse.value);
 
         // Ejecución del comando "listports"
         startTime = System.currentTimeMillis();
