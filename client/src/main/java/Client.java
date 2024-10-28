@@ -1,6 +1,7 @@
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 
 import Demo.CallbackPrx;
 import Demo.PrinterPrx;
@@ -62,18 +63,14 @@ public class Client{
                     String[] parts = input.split(":", 2);
                     String message = parts[1];
                     server.broadcastMessage(username, message);
-                } else {
-                    System.out.println("hola mundo");
-//                    totalRequests.incrementAndGet();
-//                    try {
-//                        String message = username + "@" + hostname + ":" + input;
-//                        long time = System.currentTimeMillis();
-//                        server.printString(message, callback, new HashMap<>());
-//                        successfulRequests.incrementAndGet();
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        failedRequests.incrementAndGet();
-//                    }
+                }else {
+                    Response response = server.executeCommand(username, input, null);
+                    if (response != null) {
+                        System.out.println(response.value);
+                    } else {
+                        System.out.println("Invalid command.");
+                    }
+
                 }
             }
         } catch (UnknownHostException e) {
@@ -82,76 +79,94 @@ public class Client{
     }
 
     private static void requeststest(PrinterPrx server) throws UnknownHostException {
-        long time = System.currentTimeMillis();
-        int throughput = 0;
-        int unprocessed = 0;
-        int total = 0;
-        int missing = 0;
         String username = System.getProperty("user.name");
         String hostname = InetAddress.getLocalHost().getHostName();
-//        while (System.currentTimeMillis() - time < 1000) {
-//            String message = username + "@" + hostname + ":" + "listifs";
-//            server.printString(message, null, new HashMap<>());
-//            throughput++;
-//            total = throughput + unprocessed + missing;
-//        }
-        System.out.println(" ");
-        System.out.println("Tiempos para ejecucion de listifs");
-        System.out.println("Throughput: " + throughput + " requests/s");
-        System.out.println("Unprocessed: " + unprocessed + " requests/s");
-        System.out.println("Missing: " + missing + " requests/s");
-        System.out.println("Total: " + total + " requests/s");
 
-        time = System.currentTimeMillis();
-        throughput = 0;
-        unprocessed = 0;
-        missing = 0;
-//        while (System.currentTimeMillis() - time < 1000) {
-//            String message = username + "@" + hostname + ":" + "10";
-//            server.printString(message, null, new HashMap<>());
-//            throughput++;
-//            total = throughput + unprocessed + missing;
-//        }
-        System.out.println(" ");
-        System.out.println("Tiempos para ejecucion de fibonacci");
-        System.out.println("Throughput: " + throughput + " requests/s");
-        System.out.println("Unprocessed: " + unprocessed + " requests/s");
-        System.out.println("Missing: " + missing + " requests/s");
-        System.out.println("Total: " + total + " requests/s");
+        // Definir la cantidad de repeticiones por comando
+        int repetitions = 10000; // Número de repeticiones por segundo
+        long startTime;
+        Response reportResponse;
 
-        time = System.currentTimeMillis();
-        throughput = 0;
-        unprocessed = 0;
-        missing = 0;
-//        while (System.currentTimeMillis() - time < 10000) {
-//            String message = username + "@" + hostname + ":" + "listports localhost";
-//            server.printString(message, null, new HashMap<>());
-//            throughput++;
-//            total = throughput + unprocessed + missing;
-//        }
-        System.out.println(" ");
-        System.out.println("Tiempos para ejecucion de nmap");
-        System.out.println("Throughput: " + throughput + " requests/s");
-        System.out.println("Unprocessed: " + unprocessed + " requests/s");
-        System.out.println("Missing: " + missing + " requests/s");
-        System.out.println("Total: " + total + " requests/s");
+        // Ejecución del comando "listifs"
+        startTime = System.currentTimeMillis();
+        CompletableFuture<Void>[] listifsFutures = new CompletableFuture[repetitions];
+        for (int i = 0; i < repetitions; i++) {
+            listifsFutures[i] = CompletableFuture.supplyAsync(() -> {
+                try {
+                    Response response = server.executeCommand(username, "listifs", null);
+                    System.out.println("Response for listifs: " + response.value);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            });
+        }
+        CompletableFuture<Void> allListifs = CompletableFuture.allOf(listifsFutures);
+        allListifs.join();
+        System.out.println("Executed " + repetitions + " 'listifs' commands in " + (System.currentTimeMillis() - startTime) + " ms.");
 
-        time = System.currentTimeMillis();
-        throughput = 0;
-        unprocessed = 0;
-        missing = 0;
-//        while (System.currentTimeMillis() - time < 1000) {
-//            String message = username + "@" + hostname + ":" + "!java -version";
-//            server.printString(message, null, new HashMap<>());
-//            throughput++;
-//        }
-        System.out.println(" ");
-        System.out.println("Tiempos para ejecucion de comando en consola");
-        total = throughput + unprocessed + missing;
-        System.out.println("Throughput: " + throughput + " requests/s");
-        System.out.println("Unprocessed: " + unprocessed + " requests/s");
-        System.out.println("Missing: " + missing + " requests/s");
-        System.out.println("Total: " + total + " requests/s");
+        // Generar reporte después de 'listifs'
+        reportResponse = server.executeCommand(username, "generate_report", null);
+
+        // Ejecución del comando "fibonacci"
+        startTime = System.currentTimeMillis();
+        CompletableFuture<Void>[] fibonacciFutures = new CompletableFuture[repetitions];
+        for (int i = 0; i < repetitions; i++) {
+            fibonacciFutures[i] = CompletableFuture.supplyAsync(() -> {
+                try {
+                    Response response = server.executeCommand(username, "10", null); // Comando de Fibonacci
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            });
+        }
+        CompletableFuture<Void> allFibonacci = CompletableFuture.allOf(fibonacciFutures);
+        allFibonacci.join();
+        System.out.println("Executed " + repetitions + " 'fibonacci' commands in " + (System.currentTimeMillis() - startTime) + " ms.");
+
+        // Generar reporte después de 'fibonacci'
+        reportResponse = server.executeCommand(username, "generate_report", null);
+
+        // Ejecución del comando "listports"
+        startTime = System.currentTimeMillis();
+        CompletableFuture<Void>[] listportsFutures = new CompletableFuture[repetitions];
+        for (int i = 0; i < repetitions; i++) {
+            listportsFutures[i] = CompletableFuture.supplyAsync(() -> {
+                try {
+                    Response response = server.executeCommand(username, "listports localhost", null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            });
+        }
+        CompletableFuture<Void> allListports = CompletableFuture.allOf(listportsFutures);
+        allListports.join();
+        System.out.println("Executed " + repetitions + " 'listports' commands in " + (System.currentTimeMillis() - startTime) + " ms.");
+        reportResponse = server.executeCommand(username, "generate_report", null);
+        System.out.println(reportResponse.value);
+
+        // Ejecución de comandos personalizados
+        startTime = System.currentTimeMillis();
+        String customCommand = "!java -version"; // Ejemplo de comando personalizado
+        CompletableFuture<Void>[] customCommandFutures = new CompletableFuture[repetitions];
+        for (int i = 0; i < repetitions; i++) {
+            customCommandFutures[i] = CompletableFuture.supplyAsync(() -> {
+                try {
+                    Response response = server.executeCommand(username, customCommand, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            });
+        }
+        CompletableFuture<Void> allCustomCommands = CompletableFuture.allOf(customCommandFutures);
+        allCustomCommands.join();
+        System.out.println("Executed " + repetitions + " custom commands in " + (System.currentTimeMillis() - startTime) + " ms.");
+        // Generar reporte final
+        reportResponse = server.executeCommand(username, "generate_report", null);
+        System.out.println(reportResponse.value);
     }
 
     private static void menu() {
@@ -162,6 +177,7 @@ public class Client{
         System.out.println("Type 'listifs' for network interfaces");
         System.out.println("Type 'listports <ip address>' for open ports on <ip address>");
         System.out.println("Type '!command' to execute command on server linux console");
+        System.out.println("Type a number to get the fibonacci series up to that number");
         System.out.println("Type 'exit' to quit");
     }
 

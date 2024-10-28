@@ -2,7 +2,6 @@ import Demo.CallbackPrx;
 import Demo.Response;
 import com.zeroc.Ice.Current;
 import com.zeroc.Ice.ObjectPrx;
-;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -10,8 +9,15 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PrinterI implements Demo.Printer {
+    private final AtomicInteger sucees = new AtomicInteger(0);
+    private final AtomicInteger error = new AtomicInteger(0);
+    private final AtomicInteger trhougput = new AtomicInteger(0);
+    private final AtomicLong totaltime = new AtomicLong(0);
+
 
 
     private final ConcurrentHashMap<String, CallbackPrx> clients;
@@ -20,34 +26,30 @@ public class PrinterI implements Demo.Printer {
         this.clients = new ConcurrentHashMap<String, CallbackPrx>();
     }
 
-
-//    /**
-//     * Processes a string from a client and sends the processed string back to the client
-//     * @param s the string received from the client
-//     * @param client the callback to send the processed string back to the client
-//     * @param current the ICE Current object
-//     */
-//    @Override
-//    public void printString(String s, CallbackPrx client, Current current) {
-//        new Thread(() -> {
-//            String[] info = s.split(":", 3);
-//            String newClient = info[0] + ":" + info[1];
-//            clients.putIfAbsent(newClient, client);
-//            Response ans = handleRequest(info[2],current);
-//            System.out.println(info[0] + ":" + info[1] + ":" + ans.value);
-//            System.out.println("\n");
-//            client.callbackClient(new Response(0, (info[0] + ":" + info[1] + ":" + ans.value)));
-//        }).start();
-//    }
-
     @Override
-    public Response executeCommand(String username, String message, Current current) {
+    public Response executeCommand(String userHost, String command, Current current) {
+        if (command.startsWith("generate_report")) {
+            int total = 0;
+            total +=    sucees.get() + error.get()+ trhougput.get();
+            long timetotal = totaltime.get();
+            int successrequest = sucees.get();
+            int errorrequest = error.get();
+            int throughput = trhougput.get();
+            long average = (long) (timetotal / total);
+            sucees.set(0);
+            error.set(0);
+            trhougput.set(0);
+            totaltime.set(0);
+            return new Response(0, "Success: " + successrequest +"\n"
+                    + " - Error: " + errorrequest+"\n"
+                    + " - Throughput: " + throughput+"\n"
+                    + "Total requests "+ total + "\n"
+                    + " - Total time: " + timetotal + "\n"
+                    +"average time: " + average + "\n");
+        }
         String result = "";
         long time = 0;
         try {
-            String[] splitMessage = message.split(":", 2);
-            String userHost = splitMessage[0];
-            String command = splitMessage[1];
             if (command.matches("\\d+")) {
                 int n = Integer.parseInt(command);
                 time = System.currentTimeMillis();
@@ -83,11 +85,15 @@ public class PrinterI implements Demo.Printer {
         } catch (Exception e) {
             e.printStackTrace();
             result = "Error executing command:" + e.getMessage();
+            error.incrementAndGet();
         }
         if (time == 0) {
+            trhougput.incrementAndGet();
             return new Response(0, result);
         }
         long timetotal = System.currentTimeMillis() - time;
+        sucees.incrementAndGet();
+        totaltime.addAndGet(timetotal);
         return new Response(timetotal, result);
     }
 
