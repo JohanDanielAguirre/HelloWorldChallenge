@@ -16,6 +16,9 @@ import com.zeroc.Ice.Util;
 public class Client{
     public static void main(String[] args) {
         try(Communicator communicator = Util.initialize(args, "config.client")){
+            String hostname = InetAddress.getLocalHost().getHostName();
+            String clientEndpoints = "tcp -h " + hostname + " -p 9099";
+            communicator.getProperties().setProperty("Client.Endpoints", clientEndpoints);
             PrinterPrx server = PrinterPrx.checkedCast(communicator.propertyToProxy("Printer.Proxy"));
             if (server == null) throw new Error("Invalid proxy");
 
@@ -27,8 +30,7 @@ public class Client{
             CallbackPrx callbackPrx = CallbackPrx.uncheckedCast(callbackBase);
 
             Scanner scanner = new Scanner(System.in);
-            //String username = System.getProperty("user.name");
-            String hostname = InetAddress.getLocalHost().getHostName();
+
             String username = getUsername(callbackPrx, server);
 
             while (true) {

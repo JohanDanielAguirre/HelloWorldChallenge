@@ -1,3 +1,4 @@
 ChatRoom.Endpoints=tcp -p 9099
-Ice.Default.Host= localhost
+size=1000000000
+Ice.Default.Host=xhgrid2
 Ice.ThreadPool.Server.Size=10
