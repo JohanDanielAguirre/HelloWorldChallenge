@@ -48,28 +48,8 @@ public class Client{
                     requeststest(server);
                     System.out.println("Requests test for 1 second per command...");
                     requeststesttime(server);
-                    continue;
                 }
-
-                if (input.startsWith("list clients")) {
-                    System.out.println(server.listUsernames());
-                }else if (input.startsWith("to ")) {
-                    String[] parts = input.split(" ", 3);
-                    if (parts.length == 3) {
-                        String[] splitMessage = input.split(":", 2);
-                        String userHost = splitMessage[0];
-                        String message = splitMessage[1];
-                        String[] splitUsername = userHost.split(" ", 2);
-                        String receptor = splitUsername[1];
-                        server.sendMessage(username, message, receptor);
-                    } else {
-                        System.out.println("Usage: to <username> <message>");
-                    }
-                } else if (input.startsWith("BC:")) {
-                    String[] parts = input.split(":", 2);
-                    String message = parts[1];
-                    server.broadcastMessage(username, message);
-                }else {
+                else {
                     Response response = server.executeCommand(username, input, null);
                     if (response != null) {
                         System.out.println(response.value);

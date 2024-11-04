@@ -77,7 +77,26 @@ public class PrinterI implements Demo.Printer {
                 time = System.currentTimeMillis();
                 result = executeCmd(cmd);
                 System.out.println(userHost + ": Command execution result: " + result);
-            } else {
+            }
+            else if (command.equals("list clients")) {
+                time = System.currentTimeMillis();
+                result = listUsernames(current);
+            } else if (command.startsWith("to ")) {
+                String[] parts = command.split(" ", 3);
+                if (parts.length == 3) {
+                    String receptor = parts[1];
+                    String message = parts[2];
+                    time = System.currentTimeMillis();
+                    sendMessage(userHost, message, receptor, current);
+                } else {
+                    result = "Usage: to <username> <message>";
+                }
+            } else if (command.startsWith("BC:")) {
+                String message = command.substring(3);
+                time = System.currentTimeMillis();
+                broadcastMessage(userHost, message, current);
+            }
+            else {
                 result = "Unknown command.";
                 System.out.println(userHost + ": " + result);
             }
